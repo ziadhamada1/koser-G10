@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>معرض الخرائط</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background: #f8f8f8;
+      direction: rtl;
+    }
+
+    .map-gallery {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .gallery-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .gallery-item {
+      width: 300px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gallery-item img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .gallery-item p {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    /* ✅ Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .lightbox.show {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .lightbox .close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .lightbox button {
+      position: absolute;
+      top: 50%;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 40px;
+      cursor: pointer;
+      transform: translateY(-50%);
+      user-select: none;
+    }
+
+    .lightbox .prev { left: 30px; }
+    .lightbox .next { right: 30px; }
+
+    @media (max-width: 768px) {
+      .gallery-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .gallery-item { width: 90%; }
+    }
+
+
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  tr:hover {
+    background-color: #ddd;
+  }
+
+
+
+  </style>
+</head>
+<body>
+
+  <section class="map-gallery">
+    <h2>📍 معرض الخرائط</h2>
+    <div class="gallery-container">
+
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Distance from Streams Map.jpg" alt="خريطة 1">
+        <!-- <p>"خريطة المسافة من الجداول / الأنهار الصغيرة"</p> -->
+      </div>
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/el qusayer city map.jpg" alt="خريطة 2">
+        <!-- <p>خريطة الغطاء النباتي</p> -->
+      </div>
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/el qusayer land use map.jpg" alt="خريطة 3">
+        <!-- <p>خريطة الانحدار</p> -->
+      </div>
+    </div> 
+
+
+
+
+<div class="gallery-container">
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Elevation Map.jpg" alt="خريطة 1">
+        <!-- <p>خريطة استخدام الأراضي</p> -->
+      </div>
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Flood hazard map(  After adding Rock type ).jpg" alt="خريطة 2">
+        <!-- <p>خريطة الغطاء النباتي</p> -->
+      </div>
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Flood hazard map(  Before adding Rock type ).jpg" alt="خريطة 3">
+        <!-- <p>خريطة الانحدار</p> -->
+      </div>
+    </div>
+
+
+
+
+
+
+    <div class="gallery-container">
+      
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Slope Map.jpg" alt="خريطة 3">
+        <!-- <p>خريطة الانحدار</p> -->
+      </div>
+  
+    
+
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Rock permeability ratio map.jpg" alt="خريطة 2">
+        <!-- <p>خريطة الغطاء النباتي</p> -->
+      </div>
+      <div class="gallery-item">
+        <img src="img/7OD ELQUSAYR/Rock type map.jpg" alt="خريطة 3">
+        <!-- <p>خريطة الانحدار</p> -->
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  </section>
+
+  <!-- ✅ نافذة العرض -->
+  <div id="lightbox" class="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" src="" alt="">
+    <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+    <button class="next" onclick="changeImage(1)">&#10095;</button>
+  </div>
+
+
+
+
+<section class="rocks-gallery-section" style="padding: 20px; font-family: Arial, sans-serif;">
+  <h2 style="text-align: center; margin-bottom: 20px;">جدول أنواع الصخور وتأثيرها على السيول</h2>
+
+  <div class="rocks-gallery-content" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; padding: 0 20px;">
+
+    <!-- الجدول -->
+    <div class="rocks-table-container" style="flex: 1 1 60%; min-width: 300px; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <thead style="background-color: #4CAF50; color: white;">
+          <tr>
+            <th>رقم</th>
+            <th>نوع الصخر</th>
+            <th>التصنيف الجيولوجي</th>
+            <th>النفاذية</th>
+            <th>نسبة النفاذية تقريبية</th>
+            <th>تأثيرها على السيول</th>
+            <th>يشارك في السيول؟</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>بركانيات الدخان</td><td>نارية سطحية</td><td>جزئي</td><td>10–20٪</td><td>يقلل قليلًا من سرعة السيول</td><td>جزئيًا</td></tr>
+          <tr><td>2</td><td>بركانيات متحولة</td><td>متحولة من أصل بركاني</td><td>ضعيفة</td><td>1–5٪</td><td>تساعد على تكوّن السيول بسرعة</td><td>نعم</td></tr>
+          <tr><td>3</td><td>حجر جيري بحري</td><td>رسوبي بحري كربوناتي</td><td>جزئي</td><td>15–35٪</td><td>يقلل حدة السيول في المناطق المنبسطة</td><td>لا</td></tr>
+          <tr><td>4</td><td>حجر جيري بحري مع صوان</td><td>رسوبي بحري مختلط</td><td>ضعيف</td><td>5–15٪</td><td>يزيد الجريان السطحي</td><td>نعم</td></tr>
+          <tr><td>5</td><td>رسوبيات الحمّامات</td><td>رواسب حديثة محلية</td><td>عالية</td><td>25–40٪</td><td>تمتص المياه وتقلل خطر السيول</td><td>لا</td></tr>
+          <tr><td>6</td><td>رواسب الجبس</td><td>رسوبي تبخّري</td><td>ضعيفة–متوسطة</td><td>5–15٪</td><td>قد تسبب انهيارات سطحية لكنها لا تولد سيول مباشرة</td><td>جزئيًا</td></tr>
+          <tr><td>7</td><td>رواسب القسم الرابع (الرباعي)</td><td>رواسب حديثة جدًا</td><td>عالية</td><td>30–50٪</td><td>تخزن المياه المطرية وتقلل السيول</td><td>لا</td></tr>
+          <tr><td>8</td><td>رواسب بحرية</td><td>رسوبي حديث (ساحلي)</td><td>عالية</td><td>25–45٪</td><td>تقلل السيول في السواحل</td><td>لا</td></tr>
+          <tr><td>9</td><td>سربنتينيت</td><td>متحول</td><td>ضعيفة</td><td>1–5٪</td><td>يسبب تكوّن السيول على المنحدرات</td><td>نعم</td></tr>
+          <tr><td>10</td><td>صخر ناري بركاني حمضي</td><td>ناري سطحي (ريوليت/داسيت)</td><td>ضعيفة</td><td>1–5٪</td><td>يمنع تسرب المياه ويسبب سيولًا مفاجئة</td><td>نعم</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- الخريطة -->
+    <div class="gallery-item" style="flex: 1 1 35%; min-width: 250px; text-align: center;">
+      <img src="img/7OD ELQUSAYR/Geology Map.jpg" alt="خريطة 1" 
+           style="width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+      <!-- <p>خريطة استخدام الأراضي</p> -->
+    </div>
+
+  </div>
+</section>
+
+
+<div id="laeq">
+    <h2>العرض الاخير  </h2>
+    <a href="end.html">افتح المعرض</a>
+</div>
+
+
+
+  <script>
+    const galleryImages = Array.from(document.querySelectorAll('.gallery-item img'));
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    let currentIndex = 0;
+
+    // فتح الصورة عند الضغط عليها
+    galleryImages.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        currentIndex = index;
+        openLightbox();
+      });
+    });
+
+    function openLightbox() {
+      lightboxImg.src = galleryImages[currentIndex].src;
+      lightbox.classList.add('show');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('show');
+    }
+
+    function changeImage(direction) {
+      currentIndex += direction;
+      if (currentIndex < 0) currentIndex = galleryImages.length - 1;
+      if (currentIndex >= galleryImages.length) currentIndex = 0;
+      lightboxImg.src = galleryImages[currentIndex].src;
+    }
+
+    // إغلاق عند الضغط خارج الصورة
+    lightbox.addEventListener('click', (e) => {
+      if (e.target.id === "lightbox") closeLightbox();
+    });
+
+    // التنقل بالكيبورد
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('show')) return;
+      if (e.key === 'ArrowRight') changeImage(1);
+      if (e.key === 'ArrowLeft') changeImage(-1);
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+  <script src="script.js"></script>
+
+</body>
+</html>

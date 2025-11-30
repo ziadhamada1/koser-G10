@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشروعي الجغرافي - تجربة الخرائط</title>
+    <link rel="stylesheet" href="style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: "Cairo", sans-serif;
+    background-color: #0e153a;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* هيدر */
+.main-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffeaa7;
+}
+
+/* القسم الافتتاحي */
+.hero {
+    height: 100vh;
+    background: linear-gradient(120deg, #1b1f3b, #283c86, #45a247);
+    background-size: 400% 400%;
+    animation: gradientMove 10s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 52px;
+    text-shadow: 0 0 10px #fff;
+}
+
+.hero p {
+    font-size: 22px;
+}
+
+/* ====== تأثير المطر ====== */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-repeat: repeat;
+    background-size: contain;
+    z-index: 1;
+}
+
+/* كل قطرة مطر */
+.rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 2px;
+    animation: fall linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0.2;
+    }
+}
+
+/* النص فوق المطر */
+.hero-content {
+    position: relative;
+    z-index: 5;
+}
+
+
+@keyframes gradientMove {
+    0% { background-position: 0 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* النصوص */
+section {
+    padding: 100px 10%;
+    text-align: center;
+}
+
+/* قسم الخرائط */
+.map-block {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin: 80px 0;
+}
+
+.map-block.reverse {
+    flex-direction: row-reverse;
+}
+
+.map-block img {
+    width: 550px;
+    height: 380px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    transition: .4s;
+}
+
+.map-block img:hover {
+    transform: scale(1.07);
+}
+
+/* البطاقات */
+.result-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 18px 30px;
+    border-radius: 12px;
+    font-size: 20px;
+    transition: .3s;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.card:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+/* زر */
+button {
+    padding: 15px 32px;
+    font-size: 22px;
+    background-color: #ffd000;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .3s;
+    font-weight: bold;
+    color: #222;
+}
+
+button:hover {
+    transform: scale(1.08);
+}
+
+/* الأنيميشن عند الدخول */
+.fade-section {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: 1s;
+}
+
+.fade-section.visible {
+    opacity: 1;
+    transform: translateY(0px);
+}
+.button-container {
+    margin: 60px 0;
+    text-align: center;
+}
+
+.button-container button {
+    padding: 16px 36px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1); /* شفاف ليناسب الخلفية */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(10px); /* نفس تأثير البلور الموجود في الهيدر */
+    transition: transform 0.4s, background 0.4s, box-shadow 0.4s;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.button-container button:hover {
+    background: rgba(255, 255, 255, 0.2); /* يصبح أفتح عند Hover */
+    transform: scale(1.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+/* الهيدر ثابت */
+.main-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.main-header .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffeaa7;
+}
+
+/* القسم الافتتاحي */
+.hero {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 22px;
+}
+
+/* قسم الخرائط */
+.maps {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    margin-top: 100px; /* لترك مسافة أسفل الهيدر */
+    padding: 0 20px;
+}
+
+.map-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.map-block.reverse {
+    flex-direction: row-reverse;
+}
+
+.map-text {
+    flex: 1 1 300px;
+    max-height: 15vh;
+    width: 50%;
+
+}
+
+.map-text h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.map-text p {
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.map-img {
+    flex: 1 1 400px;
+    width: 50%;
+    height:60vh; 
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.4s;
+}
+.map-img img{
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+
+.map-img:hover {
+    transform: scale(1.05);
+}
+
+.maps {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    margin-top: 100px;
+    padding: 0 20px;
+}
+
+/* الصف الرئيسي */
+.map-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* عكس الاتجاه */
+.map-row.reverse {
+    flex-direction: row-reverse;
+}
+
+/* النص */
+.map-text {
+    width: 50%;
+    margin-right: 40px;
+}
+
+/* الصور */
+.map-image {
+    width: 50%;
+}
+
+/* الصورة نفسها بدون استريتش */
+.map-image img {
+    width: 100%;
+    height: 70vh;         /* مهم – يمنع أي تمدد */
+    object-fit: contain;  /* يحافظ على النسب */
+    border-radius: 12px;
+    /* box-shadow: 0 20px 40px rgba(0,0,0,0.4); */
+    transition: transform 0.4s;
+    cursor: pointer;
+}
+
+.map-image img:hover {
+    transform: scale(1.05);
+}
+
+/* للهواتف */
+@media (max-width: 768px) {
+    .map-row,
+    .map-row.reverse {
+        flex-direction: column;
+    }
+
+    .map-text, .map-image {
+        width: 100%;
+    }
+}
+
+
+/* زر الانتقال */
+.button-container {
+    margin: 40px 0;
+    text-align: center;
+}
+
+.button-container button {
+    padding: 16px 36px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s, background 0.4s, box-shadow 0.4s;
+}
+
+.button-container button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+/* الشاشات المتوسطة (تابلت) */
+@media screen and (max-width: 992px) {
+    .hero h1 {
+        font-size: 38px;
+    }
+    .hero p {
+        font-size: 18px;
+    }
+    .map-block {
+        flex-direction: column !important;
+        gap: 30px;
+    }
+    .map-text {
+        text-align: center;
+    }
+}
+
+/* الشاشات الصغيرة (موبايل) */
+@media screen and (max-width: 600px) {
+    .hero h1 {
+        font-size: 28px;
+    }
+    .hero p {
+        font-size: 16px;
+    }
+    .map-text h3 {
+        font-size: 22px;
+    }
+    .map-text p {
+        font-size: 14px;
+    }
+    .map-img {
+        width: 100%;
+        height: auto;
+    }
+    .button-container button {
+        width: 90%;
+        padding: 14px;
+        font-size: 18px;
+    }
+}
+
+
+.sub-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 25px;
+    color: #0a4d8c;
+}
+
+.point-title {
+    font-weight: bold;
+    margin-top: 18px;
+    color: #144b7c;
+}
+
+.styled-list {
+    margin: 10px 0 20px 0;
+    padding-left: 20px;
+}
+
+.styled-list li {
+    margin: 6px 0;
+    line-height: 1.7;
+    list-style: none;
+}
+
+/* .rings-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    pointer-events: none;
+} */
+/* 
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+
+    width: calc(20px * var(--i));
+    height: calc(20px * var(--i));
+    
+    animation: wave 3s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -0.15s);
+}
+
+.circle::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: hsl(calc(var(--i) * 10), 75%, 60%);
+    filter: drop-shadow(0 0 6px rgba(0,255,255,0.5));
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: translate(-50%, -50%) rotateX(75deg)
+                   translateZ(calc(var(--i) * 4px));
+    }
+    50% {
+        transform: translate(-50%, -50%) rotateX(75deg)
+                   translateZ(calc(var(--i) * 4px + 40px));
+    }
+} */
+
+
+
+
+/* شاشة اللودر */
+#loader-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    animation: fadeOut 2s ease 2s forwards;
+}
+
+/* اللودر */
+.loader {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    perspective: 1000px;
+}
+
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    width: calc(20px * var(--i));
+    height: calc(20px * var(--i));
+    border: 2px solid hsl(calc(var(--i) * 20), 80%, 60%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotateX(70deg);
+    animation: wave 2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -0.15s);
+    opacity: 0.8;
+}
+
+/* حركة الموجة */
+@keyframes wave {
+    0% {
+        transform: translate(-50%, -50%) rotateX(70deg) translateZ(-200px);
+        opacity: 0.1;
+    }
+    50% {
+        transform: translate(-50%, -50%) rotateX(70deg) translateZ(50px);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) rotateX(70deg) translateZ(-200px);
+        opacity: 0.1;
+    }
+}
+
+/* إخفاء اللودر بعد ثانيتين */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.loader p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    background: linear-gradient(90deg, #ff0057, #ffbd00, #00ffbd, #0057ff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientText 3s ease infinite, pulse 2s ease-in-out infinite;
+}
+
+/* حركة التدرج اللوني */
+@keyframes gradientText {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* حركة تكبير وتصغير بسيطة */
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+.hero {
+    position: relative; /* لو عندك rain مطلق */
+    width: 100%;
+    height: 100vh; /* تأخذ كامل ارتفاع الشاشة */
+  
+}
+
+
+
+
+
+
+
+</style>
+
+
+
+
+
+
+</head>
+
+<body>
+
+    <!-- هيدر -->
+    <header class="main-header">
+        <div class="logo">مخاطر السيول في منطقه القصير </div>
+    </header>
+
+
+    <!-- القسم الافتتاحي -->
+  <section class="hero">
+    <div class="rain"></div>
+
+    <div class="hero-content">
+        <h1>رحلة داخل خرائط مشروعنا</h1>
+        <p>استكشف البيانات الجغرافية بطريقة تفاعلية وسلسة</p>
+    </div>
+</section>
+
+
+    <!-- قسم الهدف -->
+    <section class="goal fade-section">
+    <h2>فكرة المشروع</h2>
+
+    <p>
+        تقييم أخطار السيول على مدينة القصير على ساحل البحر الأحمر باستخدام نظم المعلومات الجغرافية
+    </p>
+
+    <!-- فقرة شرح موقع المنطقة -->
+    <h3 class="sub-title">الموقع ووصف المنطقة</h3>
+    <p>
+        تقع مدينة القصير على الساحل الغربي للبحر الأحمر جنوب شرق مصر، 
+        وتتميز بتضاريس جبلية شديدة الانحدار تحيط بها من الغرب وتتجه نحو الساحل. 
+        هذه الطبيعة الجبلية، مع وجود أودية قصيرة وسريعة الجريان، تجعل المنطقة من أكثر 
+        المناطق عرضة لحدوث السيول المفاجئة، خاصة خلال مواسم الأمطار الشتوية.
+    </p>
+
+    <h2>ليه اخترت المنطقة؟</h2>
+    <p>
+        لأنها من أكتر مناطق البحر الأحمر تعرضًا للسيول <br>
+        وجود أودية تصب مباشرة على العمران <br>
+        حصول سيول فعلية قبل كدا
+    </p>
+
+    <!-- فقرة تحت "حصول سيول فعلية قبل كدا" -->
+    <h3 class="sub-title">السيل الفعلي – مايو 2014</h3>
+
+    <p class="point-title"> مقدمة عن السيل</p>
+    <p>
+  في مايو 2014 تعرضت مدينة القصير ومحيطها لسيل قوي ناتج عن أمطار غزيرة مفاجئة
+        يُعد هذا السيل من أقوى السيول الحديثة التي أثرت فعليًا على المدينة
+    </p>
+
+    <p class="point-title"> ماذا حدث؟</p>
+    <ul class="styled-list">
+        <li>هطول أمطار شديد على الجبال والأودية المحيطة بالقصير</li>
+        <li>امتلاء وادي القصير والأودية القريبة له</li>
+        <li>اندفاع مياه السيول نحو المناطق العمرانية والطرق الساحلية</li>
+    </ul>
+
+    <p class="point-title"> تأثير السيل على المدينة</p>
+    <ul class="styled-list">
+        <li>دخول كميات من المياه إلى بعض المناطق المنخفضة داخل القصير</li>
+        <li>تضرر عدد من المنازل القديمة</li>
+        <li>غمر أجزاء من الطرق الداخلية لفترة قصيرة</li>
+    </ul>
+
+    <p class="point-title"> تأثير السيل على الطرق والربط بين المدن</p>
+    <ul class="styled-list">
+        <li>تدمير أجزاء من طريق القصير – سفاجا</li>
+        <li>تدمير أجزاء من طريق القصير – قنا</li>
+        <li>تعطل الحركة المرورية بالكامل</li>
+    </ul>
+
+    <p class="point-title"> الخسائر</p>
+    <ul class="styled-list">
+        <li>تدمّر 14 منزلًا بين القصير وسفاجا</li>
+        <li>تضرر شبكات الكهرباء والمياه</li>
+        <li>خسائر مادية في الممتلكات والمحلات</li>
+    </ul>
+
+    <p class="point-title"> أهمية السيل للمدينة</p>
+    <p>
+        يُعد “إنذارًا طبيعيًا” يُظهر خطورة الأودية المحيطة بالمدينة،  
+ودفع السلطات لاحقًا لبناء سدود ومخرات سيول جديدة لحماية المنطقة
+    </p>
+    
+</section>
+
+
+    <!-- قسم الخرائط التفاعلية -->
+<section class="maps">
+
+    <div class="map-row">
+        <div class="map-text">
+            <h3>النموذج الرقمي للارتفاعات (DEM)</h3>
+            <p>توضح الخريطة التوزيع الرأسي للارتفاعات في منطقة القصير، حيث تظهر المناطق المرتفعة في الغرب بينما تنخفض 
+              الارتفاعات باتجاه الساحل
+               يساعد هذا النموذج في تحديد مسارات جريان المياه والمناطق المنخفضة الأكثر قابلية لتجمع مياه السيول</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/Digital Elevation Model.jpg" alt="">
+        </div>
+    </div>
+
+    <div class="map-row reverse">
+        <div class="map-text">
+            <h3>  خريطة الطرق الرئيسية ومدينة القصير  </h3>
+            <p>تُظهر الخريطة شبكة الطرق الرئيسية في منطقة القصير وموقع المدينة، مما يساعد في فهم البنية و خطوط الوصول، وكذلك تحديد المنطقة الحيوية التي قد تتأثر في حالة حدوث سيول  </p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/Roads & Qusayr citie.jpg" alt="">
+        </div>
+    </div>
+
+
+
+    <div class="map-row ">
+        <div class="map-text">
+            <h3>  خريطة المباني والطرق في مدينة القصير </h3>
+            <p> توضح الخريطة المباني المنتشرة وشبكة الطرق الفرعية في مدينة القصير </p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/el qusayer city map.jpg" alt="">
+        </div>
+    </div>
+
+
+<div class="map-row reverse">
+        <div class="map-text">
+            <h3> الخريطة الجيولوجية  </h3>
+            <p>توضح الخريطة التكوينات الصخرية والطبقات الجيولوجية في منطقة القصير، حيث تؤثر طبيعة الصخور على نفاذية المياه وسرعة جريان السيول، وتساعد في تحديد المناطق الأكثر عرضة لتجمع المياه</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/QUSAYER GEOLOGY MAP.jpg" alt="">
+        </div>
+    </div>
+
+
+
+    <div class="map-row">
+        <div class="map-text">
+            <h3> خريطة أحواض وخطوط مجاري التصريف</h3>
+            <p> توضح الخريطة أحواض التصريف الرئيسية وخطوط المجاري التصريفية في منطقة القصير، مما يساعد في تحديد مسارات تجمع المياه وتوجيهها، والتعرف على المناطق الأكثر عرضة لتجمع السيول أثناء الأمطار الغزيرة</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/QUSAYER Stream con MAPP.jpg" alt="">
+        </div>
+    </div>
+
+    
+
+
+
+
+        <h2> تم تحديد حوض العمباجي الواقع علي مدينه القصير مباشرةً وهو حوض رأيسي خطير ومساحته كبيره واكثر تأثيرا علي المنطقا   </h2>
+
+
+
+
+
+    
+
+
+
+    
+
+<div class="map-row reverse">
+        <div class="map-text">
+            <h3>الخريطة الجيولوجية لحوض العمباجي   </h3>
+            <p>توضح الخريطة التكوينات الصخرية والطبقات الجيولوجية في حوض العمباجي بمدينة القصير، حيث تؤثر طبيعة الصخور على نفاذية المياه وسرعة جريان السيول، مما يساعد في تحديد المناطق الأكثر عرضة لتجمع المياه خلال الأمطار الغزيرة </p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Geology Map.jpg" alt="">
+        </div>
+    </div>
+
+
+<div class="map-row">
+        <div class="map-text">
+          <h3>خريطة تصنيف الصخور حسب النوع</h3>
+            <p>توضح الخريطة تصنيف الصخور في حوض العمباجي حسب النوع: رسوبية، نارية أو متحولة. يساعد هذا التصنيف في فهم نفاذية التربة وسلوك المياه أثناء السيول، وتحديد المناطق الأكثر عرضة لتجمع مياه الأمطار</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Rock type map.jpg" alt="">
+        </div>
+    </div>
+
+
+
+    <div class="map-row reverse">
+        <div class="map-text ">
+          <h3>خريطة تصنيف الصخور حسب النفاذية</h3>
+            <p>توضح الخريطة تصنيف الصخور في حوض العمباجي حسب نفاذيتها للمياه. المناطق ذات النفاذية المنخفضة تزداد فيها فرص تجمع المياه وتكون معرضة لخطر السيول أكثر، بينما تسمح الصخور عالية النفاذية بتصريف المياه بسرعة</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Rock permeability ratio map.jpg" alt="">
+        </div>
+    </div>
+
+
+    <div class="map-row">
+        <div class="map-text">
+          <h3>خريطة خطورة السيول بالنسبة للمجاري النهرية</h3>
+            <p>توضح الخريطة مدى خطورة السيول في مناطق القصير وفقًا لقربها أو بعدها عن المجاري النهرية. المناطق القريبة من الأودية والمجاري الرئيسية تواجه خطورة أعلى لتجمع السيول، بينما تقل المخاطر كلما ابتعدت عن هذه المجاري</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Distance from Streams Map.jpg" alt="">
+        </div>
+    </div>
+
+
+
+    <div class="map-row  reverse">
+        <div class="map-text">
+          <h3>خريطة خطورة السيول حسب الارتفاع</h3>
+            <p>توضح الخريطة توزيع خطورة السيول بين المناطق المرتفعة والمنخفضة في القصير. تميل المناطق المنخفضة إلى تراكم المياه بشكل أكبر، بينما تكون المناطق المرتفعة أقل عرضة لتجمع السيول</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Elevation Map.jpg" alt="">
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div class="map-row">
+        <div class="map-text">
+          <h3>خريطة الميل لحوض العمباجي</h3>
+            <p>توضح الخريطة توزيع ميل الأراضي في حوض العمباجي. المناطق ذات الانحدارات العالية تسهم في تسريع جريان المياه وزيادة خطر السيول، بينما المناطق ذات الانحدار المنخفض تميل إلى تراكم المياه</p>
+        </div>
+
+        <div class="map-image">
+            <img src="img/7OD ELQUSAYR/Slope Map.jpg" alt="">
+        </div>
+    </div>
+
+
+
+    
+
+
+
+
+
+</section>
+
+
+
+
+
+
+  <div class="button-container">
+    <button onclick="goToSecondPage()">الانتقال للصفحة التالية</button>
+</div>
+
+<div id="loader-screen">
+    <div class="loader">
+      <p>المجموعه العاشره</p>
+        <div class="ring" style="--i:0"></div>
+        <div class="ring" style="--i:1"></div>
+        <div class="ring" style="--i:2"></div>
+        <div class="ring" style="--i:3"></div>
+        <div class="ring" style="--i:4"></div>
+        <div class="ring" style="--i:5"></div>
+        <div class="ring" style="--i:6"></div>
+        <div class="ring" style="--i:7"></div>
+        <div class="ring" style="--i:8"></div>
+        <div class="ring" style="--i:9"></div>
+        <div class="ring" style="--i:10"></div>
+        <div class="ring" style="--i:11"></div>
+        <div class="ring" style="--i:12"></div>
+
+
+
+
+
+    </div>
+</div>
+<script>
+// ظهور العناصر أثناء النزول
+const sections = document.querySelectorAll('.fade-section');
+
+function checkSections() {
+    const trigger = window.innerHeight * 0.85;
+
+    sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+
+        if (top < trigger) {
+            sec.classList.add('visible');
+        }
+    });
+}
+
+window.addEventListener('scroll', checkSections);
+checkSections();
+
+
+// الانتقال للصفحة التالية
+function goToSecondPage() {
+    window.location.href = "second.html";
+}
+function goToSecondPage() {
+    window.location.href = "second.html"; // اسم الصفحة الثانية
+}
+
+// إنشاء قطرات المطر بشكل عشوائي
+function createRain() {
+    const rainContainer = document.querySelector(".rain");
+
+    for (let i = 0; i < 60; i++) {
+        let drop = document.createElement("div");
+        drop.classList.add("rain-drop");
+
+        // توزيع عشوائي
+        drop.style.left = Math.random() * 100 + "%";
+        drop.style.animationDuration = (Math.random() * 1.5 + 1) + "s";
+        drop.style.animationDelay = Math.random() * 2 + "s";
+
+        rainContainer.appendChild(drop);
+    }
+}
+
+createRain();
+
+
+
+
+
+
+</script>
+
+
+<script src="script.js"></script>
+</body>
+</html>

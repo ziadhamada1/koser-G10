@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>العرض الاخير   </title>
+    <link rel="stylesheet" href="style.css">
+
+<style>
+
+  
+/* البطاقات */
+.result-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 18px 30px;
+    border-radius: 12px;
+    font-size: 20px;
+    transition: .3s;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.card:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+    /* ===========================
+       خلفية متدرجة متحركة + إعدادات عامة
+    ============================ */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Cairo", sans-serif;
+        text-align: center;
+        color: white;
+        overflow-x: hidden;
+        background: linear-gradient(120deg, #1b1f3b, #283c86, #45a247);
+        background-size: 400% 400%;
+        animation: gradientMove 10s ease infinite;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+        margin-top: 0px;
+        font-size: 46px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        animation: fadeDown 1s ease-out;
+        text-shadow: 0 0 20px rgba(255,255,255,0.6);
+    }
+
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===========================
+       القسم الأول - تسلسل الصور
+    ============================ */
+    #image-section {
+        position: relative;
+        width: 100%;
+        height: 90vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .img-box {
+        width: 500px;
+        height: 450px;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 1s ease, transform 1s ease, opacity 1s ease;
+        position: relative;
+        opacity: 0;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        border: 3px solid rgba(255,255,255,0.7);
+        backdrop-filter: blur(8px);
+    }
+
+    .visible {
+        opacity: 1;
+    }
+
+    #final-image {
+        width: 500px;
+        height: 450px;
+        border-radius: 12px;
+        border: 3px solid rgba(255,255,255,0.7);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 1s ease, transform 1s ease;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    /* ===========================
+       القسم الثاني - الخرائط
+    ============================ */
+    #second-section {
+        padding: 50px 0;
+        background: linear-gradient(120deg, #1b1f3b, #283c86, #45a247);
+    }
+
+    .map-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 60px;
+        margin-top: 20px;
+    }
+
+    .single-map {
+        background: rgba(255,255,255,0.08);
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        backdrop-filter: blur(10px);
+        width: fit-content;
+        margin: auto;
+        transform: translateY(50px);
+        opacity: 0;
+        animation: fadeUp 1s forwards;
+        transition: transform 0.4s ease;
+    }
+
+    .single-map:nth-child(1) { animation-delay: 0.5s; }
+    .single-map:nth-child(2) { animation-delay: 1s; }
+    .single-map:nth-child(3) { animation-delay: 1.5s; }
+
+    .single-map img {
+        width: 500px;
+        height: 300px;
+        border-radius: 12px;
+        border: 3px solid rgba(255,255,255,0.7);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        transition: transform 0.4s, box-shadow 0.4s;
+    }
+
+    .single-map img:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 25px rgba(255,255,255,0.7);
+    }
+
+    .single-map p {
+        font-size: 20px;
+        color: #f0f0f0;
+        margin-top: 12px;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===========================
+       زر العودة للأعلى
+    ============================ */
+    .button-container {
+        margin: 50px 0;
+        text-align: center;
+    }
+
+    .button-container button {
+        padding: 16px 36px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 12px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: transform 0.4s, background 0.4s, box-shadow 0.4s;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .button-container button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.08);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    }
+
+    #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: none; /* مخفية من البداية */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+#overlay img {
+    max-width: 95%;
+    max-height: 95%;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(255,255,255,0.7);
+    transition: transform 0.4s;
+}
+
+#overlay img:hover {
+    transform: scale(1.02);
+}
+
+/* ======= رسبونسيف عام ======= */
+
+/* الشاشات المتوسطة (تابلت) */
+@media screen and (max-width: 992px) {
+    #image-section {
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 20px 0;
+    }
+    .img-box, #final-image {
+        width: 90%;
+        height: auto;
+    }
+
+    .map-container {
+        gap: 40px;
+        padding: 0 20px;
+    }
+
+    .single-map img {
+        width: 100%;
+        height: auto;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+    .single-map p {
+        font-size: 18px;
+    }
+
+    .button-container button {
+        font-size: 20px;
+        padding: 14px 28px;
+    }
+}
+
+/* الشاشات الصغيرة (موبايل) */
+@media screen and (max-width: 600px) {
+    #image-section {
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .img-box, #final-image {
+        width: 100%;
+        height: auto;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .single-map {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .single-map img {
+        width: 100%;
+        height: auto;
+    }
+
+    .single-map p {
+        font-size: 16px;
+    }
+
+    .button-container button {
+        width: 90%;
+        font-size: 18px;
+        padding: 12px 20px;
+    }
+}
+
+/* Overlay الصورة بكامل الشاشة يبقى مناسب لكل الشاشات */
+#overlay img {
+    max-width: 95%;
+    max-height: 95%;
+}
+
+
+
+
+
+#extra-content {
+    /* margin-top: 40px; */
+    opacity: 0;
+    text-align: center;
+    transition: opacity 1.2s ease;
+}
+
+#extra-content img {
+    width: 500px;
+    max-width: 90%;
+    border-radius: 14px;
+    border: 3px solid rgba(255,255,255,0.7);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    margin-top: 100px;
+}
+
+#extra-content p {
+    color: #fff;
+    font-size: 22px;
+    margin-top: 1px;
+}
+
+
+/* ===========================================================
+   تحسين شامل للرسبونسيف — نسخة معدلة بالكامل
+   =========================================================== */
+
+/* موبايل أقل من 600px */
+@media screen and (max-width: 600px) {
+
+    h1 {
+        font-size: 22px !important;
+        line-height: 1.4;
+        margin: 10px 0 20px 0;
+        padding: 0 10px;
+    }
+
+    /* =======================
+       القسم الأول — الصور
+       ======================= */
+    #image-section {
+        flex-direction: column;
+        height: auto !important;
+        padding: 10px 0;
+        gap: 12px;
+    }
+
+    .img-box {
+        width: 90% !important;
+        height: auto !important;
+        min-height: 220px;
+    }
+
+    #final-image {
+        width: 90% !important;
+        height: auto !important;
+    }
+
+    #extra-content img {
+        width: 92% !important;
+        margin-top: 25px;
+    }
+
+    #extra-content p {
+        font-size: 16px !important;
+        padding: 0 12px;
+        line-height: 1.6;
+    }
+
+    /* =======================
+       الخرائط (second-section)
+       ======================= */
+    #second-section h1 {
+        font-size: 22px !important;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+
+    .map-container {
+        width: 100%;
+        padding: 0 10px;
+        gap: 30px !important;
+    }
+
+    .single-map {
+        width: 100% !important;
+        padding: 12px !important;
+        margin: 0;
+    }
+
+    .single-map img {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .single-map p {
+        font-size: 15px !important;
+        line-height: 1.6;
+        padding: 0 10px;
+        text-align: center;
+    }
+
+    /* =======================
+       البطاقات — النتائج
+       ======================= */
+    .result-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 10px;
+    }
+
+    .card {
+        font-size: 15px !important;
+        line-height: 1.6;
+        padding: 12px;
+    }
+
+    /* =======================
+       زر الرجوع
+       ======================= */
+    .button-container button {
+        width: 85%;
+        padding: 12px 0;
+        font-size: 18px !important;
+    }
+
+    /* =======================
+       الـ Overlay
+       ======================= */
+    #overlay img {
+        width: 95% !important;
+        height: auto !important;
+    }
+}
+
+/* ===========================================================
+   شاشات التابلت (600px – 992px)
+   =========================================================== */
+@media screen and (min-width: 600px) and (max-width: 992px) {
+
+    h1 {
+        font-size: 30px !important;
+    }
+
+    #image-section {
+        flex-direction: column;
+        height: auto !important;
+        gap: 20px;
+    }
+
+    .img-box {
+        width: 80% !important;
+        min-height: 280px;
+    }
+
+    #extra-content img {
+        width: 80%;
+    }
+
+    .single-map {
+        width: 85% !important;
+    }
+
+    .single-map img {
+        width: 100% !important;
+    }
+
+    .single-map p {
+        font-size: 17px !important;
+    }
+
+    .card {
+        font-size: 17px !important;
+    }
+}
+
+
+</style>
+</head>
+<body>
+
+<h1>مشروعي - دمج الصور والخطط</h1>
+
+<!-- القسم الأول - تسلسل الصور -->
+<div id="image-section">
+    <img src="img/7OD ELQUSAYR/Rock permeability ratio map.jpg" class="img-box visible" id="img1">
+    <img src="img/7OD ELQUSAYR/Distance from Streams Map.jpg" class="img-box" id="img2">
+    <img src="img/7OD ELQUSAYR/Elevation Map.jpg" class="img-box" id="img3">
+    <img src="img/7OD ELQUSAYR/Slope Map.jpg" class="img-box" id="img4">
+</div>
+
+<!-- صورة + نص بعد دمج الصور -->
+<div id="extra-content">
+<img src="img/7OD ELQUSAYR/Flood hazard map.jpg" id="final-image"
+>
+    <p>تمثل الخريطة التوزيع النهائي للمناطق الخطرة في القصير بعد دمج خرائط الميل، نوع الصخور، الارتفاع، وخطورة القرب أو البعد عن المجاري المائية باستخدام طريقة Weighted Overlay. تُظهر الخريطة بوضوح المناطق الأكثر عرضة لتجمع السيول، مما يساعد في اخيار المكان الانسب لأقامه السدود</p>
+</div>
+
+
+
+
+
+
+
+<!-- القسم الثاني - الخرائط -->
+<div id="second-section">
+    <h1>Weighted Overlay – دمج عوامل السيول باستخدام AHP</h1>
+    <div class="map-container">
+        <div class="single-map">
+            <img src="img/7OD ELQUSAYR/Screenshot 2025-11-24 124219.jpg" alt="خريطة 4">
+            <p>
+              توضح هذه النافذة دمج خرائط الميل، نوع الصخور، الارتفاع، ودرجة القرب أو البعد عن المجاري المائية لتحديد المناطق الخطرة في القصير. تم تحديد الأوزان النسبية لكل عامل باستخدام طريقة AHP (Analytic Hierarchy Process) لضمان تقييم موضوعي ومدعوم بالمعايير العلمية. يمثل كل عامل نسبة تأثيره على الخريطة النهائية للمخاطر، حيث يصل مجموع الأوزان إلى 100%
+
+            </p>
+        </div>
+
+<!-- القسم الثاني - الخرائط -->
+<div id="second-section">
+    <h1>عرض الموديل</h1>
+    <div class="map-container">
+        <div class="single-map">
+            <img src="img/7OD ELQUSAYR/الموديل.jpg" alt="خريطة 4">
+            <p>مشروع مخاطر السيول، القصير - Model Builder 
+<br>
+<p>توضح هذه الأداة جميع الخطوات التي تم تنفيذها في المشروع بشكل مترابط، بما في ذلك معالجة البيانات، إنشاء الخرائط الفرعية مثل الميل، الارتفاع، نوع الصخور، وخطورة القرب من المجاري المائية، وصولًا إلى إنتاج خريطة المناطق الخطرة المتوقعة باستخدام طريقة Weighted Overlay</p>
+
+            </p>
+        </div>
+        <!-- نافذة عرض الصورة بكامل الشاشة -->
+<div id="overlay" onclick="closeOverlay()">
+    <img id="overlay-img" src="" alt="عرض كامل">
+</div>
+
+    
+
+
+    <!-- قسم النتائج -->
+    <section class="results fade-section">
+        <h2>أهم الاستنتاجات</h2>
+
+        <div class="result-cards">
+            <div class="card"> الصخور ذات النفاذية المنخفضة تساهم في تراكم المياه وزيادة خطورة السيول  </div>
+            <div class="card"> قرب المجاري النهرية والأودية يزيد من خطورة السيول في المناطق المحيطة بها </div>
+            <div class="card">تحديد انسب الاماكن لاقامه السدود  </div>
+            <div class="card">معرفة شبكة الطرق والمباني تساعد على تخطيط التدخلات والإخلاء في حالات الطوارئ </div>
+        </div>
+    </section>
+
+
+
+      <section class="results fade-section">
+        <h2>المصادر </h2>
+
+        <div class="result-cards">
+
+
+            <div class="card">
+أدوات GIS + Remote Sensing لتحديد الأحواض / الأودية وتصريف المياه وتقدير خطر السيول </div>
+            
+          
+            <div class="card"> استخدام DEM + تحليل مورفومتري + شبكة مجاري + بيانات جيولوجية + طبقات استخدام أرض + مناخ/هطول — نفس اللي استخدمته البحوث السابقة </div>
+            
+          
+        
+            <div class="card"> الاعتماد على أساليب مثل Weighted Overlay أو MCDA / AHP لدمج العوامل المسببة للسيول </div>
+
+            </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+  <div class="button-container">
+    <button onclick="goBack()">العودة للخلف</button>
+</div>
+
+<script>
+
+
+
+
+
+/* ===========================
+   تسلسل الصور + دمج الأربع صور
+=========================== */
+
+let clickCount = 0;
+const images = [
+    document.getElementById('img1'),
+    document.getElementById('img2'),
+    document.getElementById('img3'),
+    document.getElementById('img4')
+];
+
+const finalImage = document.getElementById('final-image');
+const imageSection = document.getElementById('image-section');
+
+imageSection.addEventListener('click', () => {
+    clickCount++;
+
+    if (clickCount < images.length) {
+        images[clickCount].classList.add('visible');
+    } else if (clickCount === images.length) {
+        const centerX = imageSection.offsetWidth / 2;
+        const centerY = imageSection.offsetHeight / 2;
+
+        images.forEach(img => {
+            const rect = img.getBoundingClientRect();
+            const moveX = centerX - (rect.left + rect.width / 2);
+            const moveY = centerY - (rect.top + rect.height / 2);
+
+            img.style.transform = `translate(${moveX}px, ${moveY}px) scale(0.1) rotate(15deg)`;
+            img.style.opacity = '0';
+        });
+
+      setTimeout(() => {
+    images.forEach(img => img.style.display = 'none');
+    finalImage.style.opacity = '1';
+    finalImage.style.transform = 'translate(-50%, -50%) scale(1)';
+
+    // إظهار الصورة الجديدة + النص
+    setTimeout(() => {
+        document.getElementById("extra-content").style.opacity = "1";
+    }, 100);
+
+}, 1000);
+
+    }
+});
+
+/* ===========================
+   زر العودة للأعلى
+=========================== */
+// العودة للصفحة السابقة
+function goBack() {
+    window.history.back(); // يرجع للصفحة السابقة في المتصفح
+}
+
+// اختيار كل الصور داخل الخرائط
+const mapImages = document.querySelectorAll('.single-map img');
+const overlay = document.getElementById('overlay');
+const overlayImg = document.getElementById('overlay-img');
+
+// عند الضغط على أي صورة
+mapImages.forEach(img => {
+    img.addEventListener('click', (e) => {
+        overlay.style.display = 'flex';
+        overlayImg.src = e.target.src; // جلب نفس مصدر الصورة
+    });
+});
+
+// عند الضغط على Overlay نفسها، إغلاق
+function closeOverlay() {
+    overlay.style.display = 'none';
+    overlayImg.src = '';
+}
+
+
+
+
+</script>
+
+</body>
+</html>
